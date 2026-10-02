@@ -44,11 +44,11 @@
 #include "MotionModule.h"
 #include "StorageModule.h"
 
-#define I2C_SDA 21
-#define I2C_SCL 22
+#define I2C_SDA 15
+#define I2C_SCL 14
 
-#define RTC_INT_PIN 27
-#define MOTOR_PIN 13
+#define RTC_INT_PIN 39
+#define MOTOR_PIN 18
 
 #define uS_TO_S_FACTOR                                                         \
   1000000ULL // Conversion factor for micro seconds to seconds
