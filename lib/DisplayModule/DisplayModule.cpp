@@ -15,8 +15,10 @@ void watchy_shutdown(bool low);
  *
  */
 DisplayModule::DisplayModule(DeviceModule &device, HealthModule &health)
-    : GxEPD2_BW<GxEPD2_154_D67, GxEPD2_154_D67::HEIGHT>(
-          GxEPD2_154_D67(EPD_CS, EPD_DC, EPD_RST, EPD_BUSY)),
+    : Arduino_CO5300(new Arduino_ESP32QSPI(AMOLED_CS, AMOLED_SCLK, AMOLED_SDIO0,
+                                           AMOLED_SDIO1, AMOLED_SDIO2,
+                                           AMOLED_SDIO3),
+                     AMOLED_RST, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 22, 0, 0, 0),
       mDevice(device), mHealth(health) {
   instance = this;
 }
@@ -45,12 +47,9 @@ void DisplayModule::lv_log_print(lv_log_level_t level, const char *buf) {
  */
 void DisplayModule::begin(bool full_refresh) {
   // Initialize display
+  Arduino_CO5300::begin();
 
-  pinMode(EPD_CS, OUTPUT);
-  pinMode(EPD_DC, OUTPUT);
-  pinMode(EPD_RST, OUTPUT);
-
-  GxEPD2_BW::init(0, full_refresh, 2, true);
+  Arduino_CO5300::fillScreen(RGB565_CYAN);
 
   lv_init();
 
@@ -343,8 +342,7 @@ void DisplayModule::my_disp_flush(lv_display_t *disp, const lv_area_t *area,
                                   unsigned char *data) {
   uint32_t width = lv_area_get_width(area);
   uint32_t height = lv_area_get_height(area);
-  instance->GxEPD2_BW::drawImage((uint8_t *)data + 8, area->x1, area->y1, width,
-                                 height, instance->inverted);
+
   lv_display_flush_ready(disp);
 }
 

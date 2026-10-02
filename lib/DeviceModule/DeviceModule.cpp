@@ -78,7 +78,7 @@ void DeviceModule::begin() {
   // mWatch.setScreen((ChronosScreen)0x80);
   mWatch.set24Hour(get24hr());
 
-  milliVolts = (analogReadMilliVolts(BATT_ADC_PIN) * 2.0f) - 120.0;
+  milliVolts = 4000;
 
   mWatch.setBattery(getBattery());
 
@@ -93,7 +93,7 @@ void DeviceModule::begin() {
  */
 void DeviceModule::update() {
   if (millis() > lastRead + (1000 * READ_INTERVAL_SEC)) {
-    milliVolts = (analogReadMilliVolts(BATT_ADC_PIN) * 2.0f) - 120.0;
+    milliVolts = 4000;
     lastRead = millis();
   }
   if (navChanged) {
@@ -213,22 +213,12 @@ float DeviceModule::getMilliVolts() { return milliVolts; }
  * @return the battery percentage
  * @note algorithm may not be accurate
  */
-int DeviceModule::getBattery() {
-  float v = getMilliVolts() / 1000.0; // convert to volts
-  float percent = (v - 3.3) / (4.2 - 3.3) * 100.0;
-  if (percent > 100)
-    percent = 100;
-  if (percent < 0)
-    percent = 0;
-  return int(percent);
-}
+int DeviceModule::getBattery() { return 99; }
 
 /**
  * Update the battery millivolts by reading ADC
  */
-void DeviceModule::updateBattery() {
-  milliVolts = (analogReadMilliVolts(BATT_ADC_PIN) * 2.0f) - 120.0;
-}
+void DeviceModule::updateBattery() { milliVolts = 4000; }
 
 /**
  * Set the RTC module with the current ESP32 time from the watch object

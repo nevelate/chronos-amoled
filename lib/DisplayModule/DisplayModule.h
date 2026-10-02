@@ -7,9 +7,8 @@
 #ifndef DISPLAYMODULE_H
 #define DISPLAYMODULE_H
 
-#define ENABLE_GxEPD2_GFX 0
 #include <ArduinoJson.h>
-#include <GxEPD2_BW.h>
+#include <Arduino_GFX_Library.h>
 #include <lvgl.h>
 
 #include "watchy_ui.h"
@@ -18,21 +17,20 @@
 #include "DeviceModule.h"
 #include "HealthModule.h"
 
-#define GxEPD2_DISPLAY_CLASS GxEPD2_BW
-#define GxEPD2_DRIVER_CLASS                                                    \
-  GxEPD2_154_D67 // GDEH0154D67 200x200, SSD1681, (HINK-E154A07-A1)
-
-#define SCREEN_WIDTH 200
-#define SCREEN_HEIGHT 200
+#define SCREEN_WIDTH 410
+#define SCREEN_HEIGHT 502
 #define LV_BUFFER ((SCREEN_WIDTH * SCREEN_HEIGHT / 8) + 8)
 
 #define CANVAS_WIDTH 48
 #define CANVAS_HEIGHT 48
 
-#define EPD_CS 5
-#define EPD_DC 10
-#define EPD_RST 9
-#define EPD_BUSY 19
+#define AMOLED_SDIO0 4
+#define AMOLED_SDIO1 5
+#define AMOLED_SDIO2 6
+#define AMOLED_SDIO3 7
+#define AMOLED_SCLK 11
+#define AMOLED_CS 12
+#define AMOLED_RST 8
 
 struct IconText {
   const void *icon;
@@ -66,7 +64,7 @@ enum SettingsView {
 
 class DeviceModule;
 
-class DisplayModule : public GxEPD2_BW<GxEPD2_154_D67, GxEPD2_154_D67::HEIGHT> {
+class DisplayModule : public Arduino_CO5300 {
 public:
   // accessible from outside the class
   DisplayModule(DeviceModule &device, HealthModule &mHealth); // constructor

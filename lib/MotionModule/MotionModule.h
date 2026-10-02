@@ -11,7 +11,7 @@
 #include <SensorBMA423.hpp>
 #include <Timber.h>
 
-#define SENSOR_IRQ 14
+#define SENSOR_IRQ 13
 
 enum BMA423_INTS
 {

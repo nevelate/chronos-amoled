@@ -208,8 +208,7 @@ void setup() {
   display.begin(full_refresh);
 
   if (full_refresh) {
-    display.drawImage(((const lv_image_dsc_t *)ic_chronos_watchy)->data + 8, 0,
-                      0, 200, 200);
+    
     delay(2000);
   }
 
@@ -286,7 +285,7 @@ void loop() {
       display.timeout();
     }
     delay(50);
-    display.hibernate();
+    
 
     buttons.configureWakeup();
 
@@ -313,7 +312,7 @@ void watchy_shutdown(bool low) {
   } else {
     display.shutdownMode();
   }
-  display.hibernate();
+  
   buttons.configureWakeup();
   esp_deep_sleep_start();
 }
