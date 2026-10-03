@@ -9,7 +9,7 @@
 
 #include <Button2.h>
 
-#define BUTTON_BACK 25
+#define BUTTON_BACK 0
 #define BUTTON_MENU 26
 #define BUTTON_UP 35
 #define BUTTON_DOWN 34
@@ -17,68 +17,60 @@
 #define LONG_CLICK_MS 1000
 
 #define MENU_BTN_MASK (BIT64(26))
-#define BACK_BTN_MASK (BIT64(25))
+#define BACK_BTN_MASK (BIT64(0))
 #define DOWN_BTN_MASK (BIT64(34))
 #define UP_BTN_MASK (BIT64(35))
 #define ACC_INT_MASK (BIT64(14))
 #define BTN_PIN_MASK MENU_BTN_MASK | BACK_BTN_MASK | UP_BTN_MASK | DOWN_BTN_MASK
 
-enum ButtonType
-{
-    BT_NONE,
-    BT_BACK,
-    BT_MENU,
-    BT_UP,
-    BT_DOWN
+enum ButtonType { BT_NONE, BT_BACK, BT_MENU, BT_UP, BT_DOWN };
+
+struct ButtonEvent {
+  ButtonType type;
+  clickType click;
+  unsigned int duration;
 };
 
-struct ButtonEvent
-{
-    ButtonType type;
-    clickType click;
-    unsigned int duration;
-};
-
-class ButtonModule
-{
+class ButtonModule {
 public:
-    // accessible from outside the class
-    ButtonModule();  // constructor
-    ~ButtonModule(); // destructor
+  // accessible from outside the class
+  ButtonModule();  // constructor
+  ~ButtonModule(); // destructor
 
-    void begin();
-    void update();
+  void begin();
+  void update();
 
-    void configureWakeup();
+  void configureWakeup();
 
-    void handleWakeup();
+  void handleWakeup();
 
-    void setButtonCallback(void (*callback)(ButtonEvent));
-    void setLongPressCallback(void(callback)(void));
+  void setButtonCallback(void (*callback)(ButtonEvent));
+  void setLongPressCallback(void(callback)(void));
 
-    String getName(ButtonType button);
-    String getInfo(ButtonEvent buttonEvent);
+  String getName(ButtonType button);
+  String getInfo(ButtonEvent buttonEvent);
 
 protected:
-    // cannot be accessed from outside the class, however, they can be accessed in inherited classes
+  // cannot be accessed from outside the class, however, they can be accessed in
+  // inherited classes
 private:
-    // cannot be accessed (or viewed) from outside the class
-    static Button2 back;
-    static Button2 menu;
-    static Button2 up;
-    static Button2 down;
+  // cannot be accessed (or viewed) from outside the class
+  static Button2 back;
+  static Button2 menu;
+  static Button2 up;
+  static Button2 down;
 
-    static void buttonHandler(Button2 &button);
-    static void buttonTask(void *param);
+  static void buttonHandler(Button2 &button);
+  static void buttonTask(void *param);
 
-    static void longPressDetect(Button2 &button);
+  static void longPressDetect(Button2 &button);
 
-    bool isPressed(int btn);
+  bool isPressed(int btn);
 
-    static ButtonModule *instance;
-    void (*buttonCallback)(ButtonEvent) = nullptr;
-    QueueHandle_t buttonQueue;
-    void (*longPressCallback)(void) = nullptr;
+  static ButtonModule *instance;
+  void (*buttonCallback)(ButtonEvent) = nullptr;
+  QueueHandle_t buttonQueue;
+  void (*longPressCallback)(void) = nullptr;
 };
 
 #endif

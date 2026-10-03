@@ -19,7 +19,7 @@
 
 #define SCREEN_WIDTH 410
 #define SCREEN_HEIGHT 502
-#define LV_BUFFER ((SCREEN_WIDTH * SCREEN_HEIGHT / 8) + 8)
+#define LV_BUFFER SCREEN_WIDTH * 50
 
 #define CANVAS_WIDTH 48
 #define CANVAS_HEIGHT 48
@@ -106,6 +106,7 @@ private:
   static void my_disp_flush(lv_display_t *disp, const lv_area_t *area,
                             unsigned char *data);
   static void screen_events_cb(lv_event_t *e);
+  static void rounder_event_cb(lv_event_t *e);
 
   const void *getWeatherIcon(int id);
   const void *getAppIcon(int id);
@@ -117,6 +118,8 @@ private:
 #endif
 
   bool inverted;
+
+  lv_color_t *disp_draw_buf;
 
   lv_obj_t *home_screen;
   lv_obj_t *info_screen;

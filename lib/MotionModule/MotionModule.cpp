@@ -12,101 +12,44 @@ static MotionModule *instance = nullptr;
  * @brief Constructor for MotionModule
  *
  */
-MotionModule::MotionModule()
-{
-	instance = this;
-}
+MotionModule::MotionModule() { instance = this; }
 
 /**
  * @brief Destructor for MotionModule
  *
  */
-MotionModule::~MotionModule()
-{
-}
+MotionModule::~MotionModule() {}
 
 /**
  * @brief
  * Inititalize BMA423 sensor
  */
-void MotionModule::begin()
-{
-	if (!SensorBMA423::begin(Wire, BMA423_I2C_ADDR_PRIMARY))
-	{
-		Timber.e("Failed to findBMA423 - check your wiring!");
-	}
-
-	SensorBMA423::configAccelerometer();
-	SensorBMA423::enableAccelerometer();
-	SensorBMA423::enableFeature(SensorBMA423::FEATURE_STEP_CNTR |
-									SensorBMA423::FEATURE_ANY_MOTION |
-									SensorBMA423::FEATURE_ACTIVITY |
-									SensorBMA423::FEATURE_TILT |
-									SensorBMA423::FEATURE_WAKEUP,
-								true);
-	SensorBMA423::setRemapAxes(SensorBMA423::REMAP_TOP_LAYER_LEFT_CORNER);
-	SensorBMA423::enablePedometer();
-	SensorBMA423::disablePedometerIRQ();
-	SensorBMA423::enableTiltIRQ();
-	SensorBMA423::enableWakeupIRQ();
-	SensorBMA423::enableAnyNoMotionIRQ();
-	SensorBMA423::enableActivityIRQ();
-	SensorBMA423::configInterrupt();
-
-	pinMode(SENSOR_IRQ, INPUT);
-	attachInterrupt(SENSOR_IRQ, irqCallback, RISING);
-}
+void MotionModule::begin() {}
 
 /**
  * @brief
  * Checks for available interrupts from BMA432 sensor
  */
-void MotionModule::update()
-{
-	if (irqFlag)
-	{
-		irqFlag = false;
-		uint16_t status = SensorBMA423::readIrqStatus();
-
-		if (interruptCallback)
-		{
-			interruptCallback(status);
-		}
-	}
-}
+void MotionModule::update() {}
 
 /**
  * Read steps count from the BMA423 sensor
  * @note this caches the value for 60 seconds before reading from the sensor
  * @return the current steps
  */
-uint32_t MotionModule::getCurrentSteps()
-{
-	uint32_t now = millis();
-	// Update once every 60 seconds (60000 ms)
-	if (now - lastUpdate >= 60000 || lastUpdate == 0)
-	{
-		steps = SensorBMA423::getPedometerCounter();
-		lastUpdate = now;
-	}
-	return steps;
-}
+uint32_t MotionModule::getCurrentSteps() { return 100; }
 
 /**
  * Callback that is triggered when an interrupt is detected
  */
-void MotionModule::irqCallback()
-{
-	instance->irqFlag = true;
-}
+void MotionModule::irqCallback() {}
 
 /**
  * Set the interrupt callback function
  * @param callback the callback function
  */
-void MotionModule::setInterruptCallback(void (*callback)(uint16_t))
-{
-	interruptCallback = callback;
+void MotionModule::setInterruptCallback(void (*callback)(uint16_t)) {
+  interruptCallback = callback;
 }
 
 /**
@@ -114,17 +57,8 @@ void MotionModule::setInterruptCallback(void (*callback)(uint16_t))
  * @param irq the interrupt flags
  * @return interrupt flags string
  */
-String MotionModule::getInterrupts(uint16_t irq)
-{
-	String state = "Interrupt: ";
-	state += (irq & TILT_INT) ? " TILT" : "";
-	state += (irq & ACTIVITY_INT) ? " ACTIVITY" : "";
-	state += (irq & ANY_NO_MOTION_INT) ? " MOTION" : "";
-	state += (irq & WAKEUP_INT) ? " DOUBLE TAP" : "";
-	state += (irq & STEP_CNTR_INT) ? " PEDOMETER" : "";
+String MotionModule::getInterrupts(uint16_t irq) {
+  String state = "No interrupts";
 
-	if (!irq)
-		state = "No interrupts";
-
-	return state;
+  return state;
 }

@@ -49,7 +49,7 @@ void DisplayModule::begin(bool full_refresh) {
   // Initialize display
   Arduino_CO5300::begin();
 
-  Arduino_CO5300::fillScreen(RGB565_CYAN);
+  Arduino_CO5300::fillScreen(RGB565_DEEPPINK);
 
   lv_init();
 
@@ -59,11 +59,21 @@ void DisplayModule::begin(bool full_refresh) {
   lv_log_register_print_cb(lv_log_print);
 #endif
 
+  disp_draw_buf = (lv_color_t *)heap_caps_malloc(
+      LV_BUFFER * 2, MALLOC_CAP_INTERNAL | MALLOC_CAP_8BIT);
+  if (!disp_draw_buf) {
+    // remove MALLOC_CAP_INTERNAL flag try again
+    disp_draw_buf =
+        (lv_color_t *)heap_caps_malloc(LV_BUFFER * 2, MALLOC_CAP_8BIT);
+  }
+
   lv_display_t *lv_display = lv_display_create(SCREEN_WIDTH, SCREEN_HEIGHT);
   lv_display_set_flush_cb(lv_display, my_disp_flush);
-  uint8_t *lv_buffer = (uint8_t *)malloc(LV_BUFFER);
-  lv_display_set_buffers(lv_display, lv_buffer, NULL, LV_BUFFER,
+  lv_display_set_buffers(lv_display, disp_draw_buf, NULL, LV_BUFFER * 2,
                          LV_DISPLAY_RENDER_MODE_PARTIAL);
+
+  lv_display_add_event_cb(lv_display, rounder_event_cb,
+                          LV_EVENT_INVALIDATE_AREA, NULL);
 
   watchy_ui_init("");
 
@@ -340,8 +350,11 @@ uint32_t DisplayModule::my_tick(void) { return millis(); }
  */
 void DisplayModule::my_disp_flush(lv_display_t *disp, const lv_area_t *area,
                                   unsigned char *data) {
-  uint32_t width = lv_area_get_width(area);
-  uint32_t height = lv_area_get_height(area);
+  uint32_t w = lv_area_get_width(area);
+  uint32_t h = lv_area_get_height(area);
+
+  instance->draw16bitRGBBitmap(area->x1, area->y1, (uint16_t *)data, w,
+                                     h);
 
   lv_display_flush_ready(disp);
 }
@@ -368,6 +381,22 @@ void DisplayModule::screen_events_cb(lv_event_t *e) {
       instance->mDevice.sleepTimerStart(60);
     }
   }
+}
+
+void DisplayModule::rounder_event_cb(lv_event_t *e) {
+  lv_area_t *area = (lv_area_t *)lv_event_get_param(e);
+  uint16_t x1 = area->x1;
+  uint16_t x2 = area->x2;
+
+  uint16_t y1 = area->y1;
+  uint16_t y2 = area->y2;
+
+  // round the start of coordinate down to the nearest 2M number
+  area->x1 = (x1 >> 1) << 1;
+  area->y1 = (y1 >> 1) << 1;
+  // round the end of coordinate up to the nearest 2N+1 number
+  area->x2 = ((x2 >> 1) << 1) + 1;
+  area->y2 = ((y2 >> 1) << 1) + 1;
 }
 
 /**

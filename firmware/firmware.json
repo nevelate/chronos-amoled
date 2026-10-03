@@ -1,29 +1,29 @@
 {
     "merged": {
-        "file": "amoled_206_v1.2.0_20261002_merged_0x0.bin",
+        "file": "amoled_206_v1.2.0_20261003_merged_0x0.bin",
         "address": "0x0",
         "hex": 0,
-        "size": 1559760,
+        "size": 1536992,
         "chip": "esp32s3"
     },
     "split": [
         {
-            "file": "amoled_206_v1.2.0_20261002_bootloader_0x0000.bin",
+            "file": "amoled_206_v1.2.0_20261003_bootloader_0x0000.bin",
             "address": "0x0",
             "hex": 0
         },
         {
-            "file": "amoled_206_v1.2.0_20261002_partitions_0x8000.bin",
+            "file": "amoled_206_v1.2.0_20261003_partitions_0x8000.bin",
             "address": "0x8000",
             "hex": 32768
         },
         {
-            "file": "amoled_206_v1.2.0_20261002_boot_app0_0xe000.bin",
+            "file": "amoled_206_v1.2.0_20261003_boot_app0_0xe000.bin",
             "address": "0xE000",
             "hex": 57344
         },
         {
-            "file": "amoled_206_v1.2.0_20261002_firmware_0x10000.bin",
+            "file": "amoled_206_v1.2.0_20261003_firmware_0x10000.bin",
             "address": "0x10000",
             "hex": 65536
         }
